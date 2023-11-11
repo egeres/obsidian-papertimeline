@@ -3,6 +3,8 @@
 	let zoomLevel = 1;
 	let isDragging = false;
 	let startX;
+	let targetScrollLeft = 0;
+	let currentScrollLeft = 0;
 
 	function startDrag(event) {
 		isDragging = true;
@@ -25,8 +27,25 @@
 
 	function handleScroll(event) {
 		const timeline = document.querySelector(".timeline");
-		timeline.scrollLeft += event.deltaY;
+		targetScrollLeft += event.deltaY;
+
+		targetScrollLeft = Math.min(
+			Math.max(0, targetScrollLeft),
+			timeline.scrollWidth - timeline.clientWidth
+		);
+		smoothScroll();
 		event.preventDefault();
+	}
+
+	function smoothScroll() {
+		// Linear interpolation
+		currentScrollLeft += (targetScrollLeft - currentScrollLeft) * 0.05;
+		const timeline = document.querySelector(".timeline");
+		timeline.scrollLeft = currentScrollLeft;
+
+		if (Math.abs(targetScrollLeft - currentScrollLeft) > 1) {
+			requestAnimationFrame(smoothScroll);
+		}
 	}
 
 	function handleZoom(event) {
@@ -46,7 +65,7 @@
 
 <div
 	class="timeline"
-    role="presentation"
+	role="presentation"
 	on:wheel={handleZoom}
 	on:mousedown={startDrag}
 	on:mouseup={endDrag}
@@ -74,15 +93,8 @@
 		width: 100%;
 		height: 300px;
 		position: relative;
-		/* Add more styling for the timeline here */
-		overflow-x: auto; /* Enables horizontal scrolling */
-		white-space: nowrap; /* Keeps the timeline in one line */
-
-		/* Hide the scrollbar */
-		-ms-overflow-style: none; /* IE and Edge */
-		scrollbar-width: none; /* Firefox */
-
-		/* Hide scrollbar for Chrome, Safari and Opera */
+		overflow-x: auto;
+		white-space: nowrap;
 	}
 
 	.timeline::-webkit-scrollbar {
