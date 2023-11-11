@@ -8,8 +8,10 @@
 
 <style>
 	.container {
-		width: 100%;
-		height: 100%;
-		background-color: rgb(52, 19, 19);
+        position: absolute;
+        top: 300;
+        left: 0;
+        right: 0;
+        bottom: 0;
 	}
 </style>
