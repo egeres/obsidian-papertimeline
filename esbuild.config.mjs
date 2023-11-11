@@ -1,4 +1,6 @@
 import esbuild from "esbuild";
+import esbuildSvelte from "esbuild-svelte";
+import sveltePreprocess from "svelte-preprocess";
 import process from "process";
 import builtins from "builtin-modules";
 
@@ -11,12 +13,19 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === "production");
 
+// Svelte plugin configuration
+const sveltePlugin = esbuildSvelte({
+	compilerOptions: { css: true },
+	preprocess: sveltePreprocess(),
+});
+
 const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
 	entryPoints: ["main.ts"],
 	bundle: true,
+	plugins: [sveltePlugin],
 	external: [
 		"obsidian",
 		"electron",
