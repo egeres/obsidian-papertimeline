@@ -1,17 +1,19 @@
 <script>
 	import { onMount } from "svelte";
+    
+	// let data = [
+	// 	// { date: new Date(2022, 6, 15), title: "Longus titlus Event 1" },
+	// 	// { date: new Date(2015, 0, 1), title: "Event 2" },
+	// 	// { date: new Date(2015, 11, 31), title: "Event 2" },
+	// 	// {
+	// 	// 	date: new Date(2020, 6, 15),
+	// 	// 	title: "This paper was actually important",
+	// 	// },
+	// 	// { date: new Date(2023, 1, 1), title: "Event 2" },
+	// 	// ... other events
+	// ];
 
-	let events = [
-		// { date: new Date(2022, 6, 15), title: "Longus titlus Event 1" },
-		{ date: new Date(2015, 0, 1), title: "Event 2" },
-		{ date: new Date(2015, 11, 31), title: "Event 2" },
-		{
-			date: new Date(2020, 6, 15),
-			title: "This paper was actually important",
-		},
-		// { date: new Date(2023, 1, 1), title: "Event 2" },
-		// ... other events
-	];
+    export let data;
 
 	let pixelsPerYear = 100;
 	let zoomLevel = 1;
@@ -43,7 +45,9 @@
 		return years * pixelsPerYear;
 	};
 
-	onMount(() => {});
+	onMount(() => {
+        console.log(data)
+    });
 
 	function startDrag(event) {
 		isDragging = true;
@@ -111,7 +115,7 @@
 	on:mouseleave={endDrag}
 	on:mousemove={handleMouseMove}
 >
-	{#each events as event}
+	{#each data as event}
 		<div
 			class="event"
 			style="left: {calculatePosition(event.date, pixelsPerYear)}px"
@@ -167,7 +171,7 @@
 		position: relative;
 		overflow-x: auto;
 		white-space: nowrap;
-		border-bottom: 2px solid white;
+		/* border-bottom: 2px solid white; */
 	}
 
 	.timeline::-webkit-scrollbar {
@@ -186,7 +190,8 @@
 		writing-mode: vertical-rl;
 		transform-origin: bottom;
 		position: absolute;
-		bottom: 0;
+		bottom: 10px;
         transform: translateX(-50%);
+        color: rgb(75, 75, 75);
 	}
 </style>

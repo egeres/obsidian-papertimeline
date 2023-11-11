@@ -1,5 +1,6 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, ItemView, WorkspaceLeaf } from 'obsidian';
 import Container from "./Components/Container.svelte";
+import jsyaml from 'js-yaml';
 
 // Remember to rename these classes and interfaces!
 
@@ -25,17 +26,71 @@ class MyCustomView extends ItemView {
     }
 
     getDisplayText() {
-        return 'My Custom View';
+        return 'Timeline';
     }
 
     async onOpen() {
         // const div = document.createElement('div');
         // div.textContent = 'Hello!!!';
         // this.containerEl.children[1].appendChild(div);
+
+		let data_to_pass = [];
+
+		const markdownFiles = this.app.vault.getMarkdownFiles(); 
+		
+		// Iterate over each file
+		for (const file of markdownFiles) {
+			try {
+				const content = await this.app.vault.read(file);
+				// Here, parse the content to extract properties
+				// For example, extract YAML frontmatter or other specific data
+
+
+
+
+				const frontmatterRegex = /^---\s*[\s\S]*?---/;  // Regular expression to match YAML frontmatter
+
+				if (frontmatterRegex.test(content)) {
+					const frontmatter = content.match(frontmatterRegex)[0];
+					// Remove the --- lines
+					const yamlContent = frontmatter.replace(/---/g, '').trim();
+					
+					// Parse the YAML content to a dictionary
+					// Assuming you have a YAML parsing library like js-yaml
+					try {
+						const data = jsyaml.load(yamlContent);
+						// console.log("dataaaaa:", data);
+						// return data;
+
+
+						if (data?.type === "paper" && data?.date && data?.title_short)
+						{
+							data_to_pass.push({
+								"date": new Date(data.date),
+								"title": data.title_short,
+							});
+						}
+					} catch (error) {
+						console.error("Error parsing YAML:", error);
+						// return null;
+					}
+				} else {
+					// return null; // No YAML frontmatter found
+				}
+
+
+
+
+
+			} catch (error) {
+				console.error("Error reading file:", error);
+			}
+		}
+
 		this.component = new Container({
 			target: this.contentEl,
 			props: {
-			  	// variable: 1
+			  	"data": data_to_pass,
 			}
 		});
     }

@@ -24,5 +24,8 @@
 		"svelte-preprocess": "^5.1.0",
 		"tslib": "2.4.0",
 		"typescript": "^5.0.2"
+	},
+	"dependencies": {
+		"js-yaml": "^4.1.0"
 	}
 }
