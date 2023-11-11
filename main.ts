@@ -1,6 +1,8 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, ItemView, WorkspaceLeaf } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
+
+const MY_CUSTOM_VIEW_TYPE = 'my-custom-view';
 
 interface MyPluginSettings {
 	mySetting: string;
@@ -10,11 +12,48 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
+class MyCustomView extends ItemView {
+
+    constructor(leaf: WorkspaceLeaf) {
+        super(leaf);
+    }
+
+    getViewType() {
+        return MY_CUSTOM_VIEW_TYPE;
+    }
+
+    getDisplayText() {
+        return 'My Custom View';
+    }
+
+    async onOpen() {
+        const div = document.createElement('div');
+        div.textContent = 'Hello!!!';
+        this.containerEl.children[1].appendChild(div);
+    }
+
+    async onClose() {
+    }
+}
+
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
+
+		// Register the custom view
+		this.registerView(
+			MY_CUSTOM_VIEW_TYPE,
+			(leaf) => new MyCustomView(leaf)
+		);
+
+		// Add a command to open your custom view
+		this.addCommand({
+			id: 'open-my-custom-view',
+			name: 'Open My Custom View',
+			callback: () => this.activateView(),
+		});
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
@@ -89,6 +128,14 @@ export default class MyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	async activateView() {
+        // Open the view in a new leaf
+        this.app.workspace.detachLeavesOfType(MY_CUSTOM_VIEW_TYPE);
+        await this.app.workspace.getRightLeaf(true).setViewState({
+            type: MY_CUSTOM_VIEW_TYPE,
+        });
+    }
 }
 
 class SampleModal extends Modal {
