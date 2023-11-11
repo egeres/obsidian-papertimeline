@@ -1,5 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, ItemView, WorkspaceLeaf } from 'obsidian';
-import Component from "./Component.svelte";
+import Container from "./Components/Container.svelte";
 
 // Remember to rename these classes and interfaces!
 
@@ -14,7 +14,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 }
 
 class MyCustomView extends ItemView {
-	component: Component;
+	component: Container;
 
     constructor(leaf: WorkspaceLeaf) {
         super(leaf);
@@ -32,10 +32,10 @@ class MyCustomView extends ItemView {
         // const div = document.createElement('div');
         // div.textContent = 'Hello!!!';
         // this.containerEl.children[1].appendChild(div);
-		this.component = new Component({
+		this.component = new Container({
 			target: this.contentEl,
 			props: {
-			  	variable: 1
+			  	// variable: 1
 			}
 		});
     }
